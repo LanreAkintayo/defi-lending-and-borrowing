@@ -1,0 +1,38 @@
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.5.0
+  - smartcontractkit/chainlink-brownie-contracts@0.4.0
+
+compiler:
+  solc:
+    remappings: 
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.5.0'
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.4.0'
+  
+networks:
+  development:
+    verify: False
+
+  ganache:
+    verify: False
+  
+  kovan:
+    verify: False
+    dai_usd_price_feed_address: '0x777A68032a88E5A84678A77Af2CD65A7b3c0775a'
+    eth_usd_price_feed_address: '0x9326BFA02ADD2366b30bacB125260Af641031331'
+    link_usd_price_feed_address: '0x396c5E36DD0a0F5a5D33dae44368D4193f69a1F0'
+    fau_usd_price_feed_address: '0x777A68032a88E5A84678A77Af2CD65A7b3c0775a'
+    
+    dai_token_address: '0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD'
+    weth_token_address: '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
+    link_token_address: '0xa36085F69e2889c224210F603D836748e7dC0088'
+    fau_token_address: '0xFab46E002BbF0b4509813474841E0716E6730136' 
+    dapp_token_address: '0x984a0522DdF80dC80286e8540479B74548f7013a'
+
+
+dotenv: .env
+
+wallets:
+  from_key1: ${PRIVATE_KEY1}
+  from_key2: ${PRIVATE_KEY2}
+  from_key3: ${PRIVATE_KEY3}
+
