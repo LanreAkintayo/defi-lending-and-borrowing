@@ -24,6 +24,7 @@ contract LendingAndBorrowing is Ownable {
         address tokenAddress;
         uint256 LTV;
         uint256 stableRate;
+        string name;
     }
 
     Token[] public tokensForLending;
@@ -39,11 +40,12 @@ contract LendingAndBorrowing is Ownable {
     }
 
     function addTokensForLending(
+        string memory name,
         address tokenAddress,
         uint256 LTV,
-        uint256 stableRate
+        uint256 borrowStableRate
     ) public onlyOwner {
-        Token memory token = Token(tokenAddress, LTV, stableRate);
+        Token memory token = Token(tokenAddress, LTV, borrowStableRate, name);
 
         if (!tokenIsAlreadyThere(token, tokensForLending)) {
             tokensForLending.push(token);
@@ -51,11 +53,12 @@ contract LendingAndBorrowing is Ownable {
     }
 
     function addTokensForBorrowing(
+        string memory name,
         address tokenAddress,
         uint256 LTV,
-        uint256 stableRate
+        uint256 borrowStableRate
     ) public onlyOwner {
-        Token memory token = Token(tokenAddress, LTV, stableRate);
+        Token memory token = Token(tokenAddress, LTV, borrowStableRate, name);
 
         if (!tokenIsAlreadyThere(token, tokensForBorrowing)) {
             tokensForBorrowing.push(token);
@@ -75,6 +78,14 @@ contract LendingAndBorrowing is Ownable {
 
     function getBorrowersArray() public view returns (address[] memory) {
         return borrowers;
+    }
+
+    function getTokensForLendingArray() public view returns (Token[] memory) {
+        return tokensForLending;
+    }
+
+    function getTokensForBorrowingArray() public view returns (Token[] memory) {
+        return tokensForBorrowing;
     }
 
     function lend(address tokenAddress, uint256 amount) public payable {
@@ -116,7 +127,6 @@ contract LendingAndBorrowing is Ownable {
     }
 
     function borrow(uint256 amount, address tokenAddress) public {
-
         require(
             tokenIsAllowed(tokenAddress, tokensForBorrowing),
             "Token is not supported for borrowing"
@@ -178,7 +188,11 @@ contract LendingAndBorrowing is Ownable {
         uint256 totalTokenAmountToCollectFromUser = amount +
             interest(tokenAddress, tokenBorrowed);
 
-        token.transferFrom(msg.sender, address(this), totalTokenAmountToCollectFromUser);
+        token.transferFrom(
+            msg.sender,
+            address(this),
+            totalTokenAmountToCollectFromUser
+        );
 
         tokensBorrowedAmount[tokenAddress][msg.sender] =
             tokensBorrowedAmount[tokenAddress][msg.sender] -
@@ -199,36 +213,35 @@ contract LendingAndBorrowing is Ownable {
         require(amount > 0, "Amount should be greater than 0");
 
         int256 index = indexOf(msg.sender, lenders);
-        require(
-            index >= 0,
-            "User address is not found in the list of lenders"
-        );
+        require(index >= 0, "User address is not found in the list of lenders");
 
-        
         IERC20 token = IERC20(tokenAddress);
 
-        uint tokenAmountLent = tokensLentAmount[tokenAddress][msg.sender];
+        uint256 tokenAmountLent = tokensLentAmount[tokenAddress][msg.sender];
 
         require(tokenAmountLent >= amount);
 
-        uint larTokenToRemove = getAmountInDollars(amount, tokenAddress);
+        uint256 larTokenToRemove = getAmountInDollars(amount, tokenAddress);
         larToken.transferFrom(msg.sender, address(this), larTokenToRemove);
-        
+
+        // uint tokenAmountToTransferToUser = getTotalLendingInterest(amount, tokenAddress);
+
+        // if (tokensLentAmount[tokenAddress][msg.sender])
+
         token.transfer(msg.sender, amount);
 
-        tokensLentAmount[tokenAddress][msg.sender] = tokensLentAmount[tokenAddress][msg.sender] - amount;
+        tokensLentAmount[tokenAddress][msg.sender] =
+            tokensLentAmount[tokenAddress][msg.sender] -
+            amount;
 
-         // Check If all the amount lent = 0;
-        uint256 totalAmountLent = getTotalAmountLentInDollars(
-            msg.sender
-        );
+        // Check If all the amount lent = 0;
+        uint256 totalAmountLent = getTotalAmountLentInDollars(msg.sender);
 
         if (totalAmountLent == 0) {
             lenders[uint256(index)] = lenders[lenders.length - 1];
             lenders.pop();
         }
     }
-
 
     function indexOf(address user, address[] memory addressArray)
         public
@@ -239,7 +252,7 @@ contract LendingAndBorrowing is Ownable {
         for (uint256 i = 0; i < addressArray.length; i++) {
             address currentAddress = addressArray[i];
             if (currentAddress == user) {
-                return int(i);
+                return int256(i);
             }
         }
         return index;
@@ -301,7 +314,6 @@ contract LendingAndBorrowing is Ownable {
         return totalAmountLent;
     }
 
-
     function interest(address tokenAddress, uint256 tokenBorrowed)
         public
         view
@@ -332,46 +344,88 @@ contract LendingAndBorrowing is Ownable {
         view
         returns (uint256)
     {
-        uint256 totalAvailableToBorrow = 0;
+        // uint256 totalAvailableToBorrow = 0;
 
-        for (uint256 i = 0; i < noOfTokensLent; i++) {
-            address userLentTokenAddressFound = tokensLent[i][user];
+        uint256 userTotalCollateralToBorrow = 0;
+        uint256 userTotalCollateralAlreadyBorrowed = 0;
 
-            if (
-                userLentTokenAddressFound !=
-                0x0000000000000000000000000000000000000000
-            ) {
-                Token memory token = getTokenFrom(userLentTokenAddressFound);
-                uint256 tokenLoanToValueRatio = token.LTV;
-
-                bool isBorrowed = tokenIsBorrowed(
-                    user,
-                    userLentTokenAddressFound
-                );
-
-                uint256 tokenAmountAvailable;
-
-                if (!isBorrowed) {
-                    tokenAmountAvailable = tokensLentAmount[
-                        userLentTokenAddressFound
+        for (uint256 i = 0; i < lenders.length; i++) {
+            address currentLender = lenders[i];
+            if (currentLender == user) {
+                for (uint256 j = 0; j < tokensForLending.length; j++) {
+                    Token memory currentTokenForLending = tokensForLending[j];
+                    uint256 currentTokenLentAmount = tokensLentAmount[
+                        currentTokenForLending.tokenAddress
                     ][user];
-                } else {
-                    tokenAmountAvailable =
-                        tokensLentAmount[userLentTokenAddressFound][user] -
-                        tokensBorrowedAmount[userLentTokenAddressFound][user];
+                    uint256 currentTokenLentAmountInDollar = getAmountInDollars(
+                        currentTokenLentAmount,
+                        currentTokenForLending.tokenAddress
+                    );
+                    uint256 availableInDollar = (currentTokenLentAmountInDollar *
+                            currentTokenForLending.LTV) / 10**18;
+                    userTotalCollateralToBorrow += availableInDollar;
                 }
-                uint256 currentTokenAmountInDollars = getAmountInDollars(
-                    tokenAmountAvailable,
-                    userLentTokenAddressFound
-                );
-                uint256 availableToBorrow = (currentTokenAmountInDollars *
-                    tokenLoanToValueRatio) / 10**18;
-
-                totalAvailableToBorrow += availableToBorrow;
             }
         }
 
-        return totalAvailableToBorrow;
+        for (uint256 i = 0; i < borrowers.length; i++) {
+            address currentBorrower = borrowers[i];
+            if (currentBorrower == user) {
+                for (uint256 j = 0; j < tokensForBorrowing.length; j++) {
+                    Token memory currentTokenForBorrowing = tokensForBorrowing[j];
+                    uint256 currentTokenBorrowedAmount = tokensBorrowedAmount[
+                        currentTokenForBorrowing.tokenAddress
+                    ][user];
+                    uint256 currentTokenBorrowedAmountInDollar = getAmountInDollars(
+                        (currentTokenBorrowedAmount),
+                        currentTokenForBorrowing.tokenAddress
+                    );
+                    
+                    userTotalCollateralAlreadyBorrowed += currentTokenBorrowedAmountInDollar;
+                }
+            }
+        }
+
+        return userTotalCollateralToBorrow - userTotalCollateralAlreadyBorrowed;
+
+        // for (uint256 i = 0; i < noOfTokensLent; i++) {
+        //     address userLentTokenAddressFound = tokensLent[i][user];
+
+        //     if (
+        //         userLentTokenAddressFound !=
+        //         0x0000000000000000000000000000000000000000
+        //     ) {
+        //         Token memory token = getTokenFrom(userLentTokenAddressFound);
+        //         uint256 tokenLoanToValueRatio = token.LTV;
+
+        //         bool isBorrowed = tokenIsBorrowed(
+        //             user,
+        //             userLentTokenAddressFound
+        //         );
+
+        //         uint256 tokenAmountAvailable;
+
+        //         if (!isBorrowed) {
+        //             tokenAmountAvailable = tokensLentAmount[
+        //                 userLentTokenAddressFound
+        //             ][user];
+        //         } else {
+        //             tokenAmountAvailable =
+        //                 tokensLentAmount[userLentTokenAddressFound][user] -
+        //                 tokensBorrowedAmount[userLentTokenAddressFound][user];
+        //         }
+        //         uint256 currentTokenAmountInDollars = getAmountInDollars(
+        //             tokenAmountAvailable,
+        //             userLentTokenAddressFound
+        //         );
+        //         uint256 availableToBorrow = (currentTokenAmountInDollars *
+        //             tokenLoanToValueRatio) / 10**18;
+
+        //         totalAvailableToBorrow += availableToBorrow;
+        //     }
+        // }
+
+        // return totalAvailableToBorrow;
     }
 
     function tokenIsBorrowed(address user, address token)
@@ -515,13 +569,13 @@ contract LendingAndBorrowing is Ownable {
         address tokenAddress,
         uint256 noOfTokenslentOrBorrowed,
         string memory _tokensLentOrBorrowed
-    ) private view returns (bool) {
+    ) public view returns (bool) {
         if (noOfTokenslentOrBorrowed > 0) {
             if (
                 keccak256(abi.encodePacked(_tokensLentOrBorrowed)) ==
                 keccak256(abi.encodePacked("tokensLent"))
             ) {
-                for (uint256 i = 0; i < noOfTokensBorrowed; i++) {
+                for (uint256 i = 0; i < noOfTokensLent; i++) {
                     address tokenAddressFound = tokensLent[i][currentUser];
                     if (tokenAddressFound == tokenAddress) {
                         return true;
@@ -531,7 +585,7 @@ contract LendingAndBorrowing is Ownable {
                 keccak256(abi.encodePacked(_tokensLentOrBorrowed)) ==
                 keccak256(abi.encodePacked("tokensBorrowed"))
             ) {
-                for (uint256 i = 0; i < noOfTokensLent; i++) {
+                for (uint256 i = 0; i < noOfTokensBorrowed; i++) {
                     address tokenAddressFound = tokensBorrowed[i][currentUser];
                     if (tokenAddressFound == tokenAddress) {
                         return true;
@@ -559,5 +613,39 @@ contract LendingAndBorrowing is Ownable {
 
         return (false, -1);
     }
-}
 
+    function getTotalTokenSupplied(address tokenAddres)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 totalTokenSupplied = 0;
+        if (lenders.length > 0) {
+            for (uint256 i = 0; i < lenders.length; i++) {
+                address curentLender = lenders[i];
+                totalTokenSupplied += tokensLentAmount[tokenAddres][
+                    curentLender
+                ];
+            }
+        }
+
+        return totalTokenSupplied;
+    }
+
+    function getTotalTokenBorrowed(address tokenAddress)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 totalTokenBorrowed = 0;
+        if (borrowers.length > 0) {
+            for (uint256 i = 0; i < borrowers.length; i++) {
+                address curentBorrower = borrowers[i];
+                totalTokenBorrowed += tokensBorrowedAmount[tokenAddress][
+                    curentBorrower
+                ];
+            }
+        }
+        return totalTokenBorrowed;
+    }
+}

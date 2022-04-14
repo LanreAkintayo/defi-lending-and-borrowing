@@ -49,16 +49,16 @@ def deploy_integration_lending_and_borrowing():
     tx2 = lending_and_borrowing.addTokenToPriceFeedMapping(dapp_token, token_to_price_feed[dapp_token], {"from": owner})
     tx2.wait(1)
 
-    tx3 = lending_and_borrowing.addTokensForLending(lar_token.address, 0.8 * (10**18), 0.05 * (10**18), {"from": owner})
+    tx3 = lending_and_borrowing.addTokensForLending("LAR", lar_token.address, 0.8 * (10**18), 0.05 * (10**18), {"from": owner})
     tx3.wait(1)
 
-    tx4 = lending_and_borrowing.addTokensForLending(dapp_token, 0.75 * (10**18), 0.05 * (10**18), {"from": owner})
+    tx4 = lending_and_borrowing.addTokensForLending("DAP", dapp_token, 0.75 * (10**18), 0.05 * (10**18), {"from": owner})
     tx4.wait(1)
 
-    tx5 = lending_and_borrowing.addTokensForBorrowing(lar_token.address, 0.8 * (10**18), 0.05 * (10**18), {"from": owner})
+    tx5 = lending_and_borrowing.addTokensForBorrowing("LAR", lar_token.address, 0.8 * (10**18), 0.05 * (10**18), {"from": owner})
     tx5.wait(1)
 
-    tx6 = lending_and_borrowing.addTokensForBorrowing(dapp_token, 0.75 * (10**18), 0.05 * (10**18), {"from": owner})
+    tx6 = lending_and_borrowing.addTokensForBorrowing("DAPP", dapp_token, 0.75 * (10**18), 0.05 * (10**18), {"from": owner})
     tx6.wait(1)
 
     return lending_and_borrowing, lar_token, dapp_token
