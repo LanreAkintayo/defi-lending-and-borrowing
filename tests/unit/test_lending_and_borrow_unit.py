@@ -143,7 +143,11 @@ def test_borrow():
     availableToBorrowInDollars = lending_and_borrowing.getUserTotalAmountAvailableForBorrowInDollars(account)
     print("available to borrow: ", availableToBorrowInDollars)
 
-    assert False
+    totalBorrowedByUser = lending_and_borrowing.getTotalAmountBorrowedInDollars(account)
+    print("total borrowed by user: ", totalBorrowedByUser)
+
+    assert lending_and_borrowing.noOfTokensBorrowed() == 2
+    assert totalBorrowedByUser == 1.4 * 10**18
 
     lending_and_borrowing.borrow(toWei(2), lar_token, {"from": another_lender})
 

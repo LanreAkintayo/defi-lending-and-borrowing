@@ -20,6 +20,11 @@ contract LendingAndBorrowing is Ownable {
 
     mapping(uint256 => mapping(address => address)) public tokensLentOrBorrowed;
 
+    event Withdraw(address sender, uint amount, uint tokenToWithdrawInDollars, uint availableToWithdraw, uint totalAmountLentInDollars);
+    event PayDebt(address sender, int index, uint tokenAmountBorrowed, uint totalTokenAmountToCollectFromUser, address[] borrowers);
+    event Borrow(address sender, uint amountInDollars, uint totalAmountAvailableForBorrowInDollars, bool userPresent, int userIndex, address[] borrowers, uint currentUserTokenBorrowedAmount);
+    event Supply(address sender, address[] lenders, uint currentUserTokenLentAmount);
+
     struct Token {
         address tokenAddress;
         uint256 LTV;
@@ -124,6 +129,8 @@ contract LendingAndBorrowing is Ownable {
         }
 
         rewardUserToken(msg.sender, tokenAddress, amount);
+
+        emit Supply(msg.sender, lenders, tokensLentAmount[tokenAddress][msg.sender]);
     }
 
     function borrow(uint256 amount, address tokenAddress) public {
@@ -169,6 +176,8 @@ contract LendingAndBorrowing is Ownable {
             tokensBorrowedAmount[tokenAddress][msg.sender] = amount;
             tokensBorrowed[noOfTokensBorrowed++][msg.sender] = tokenAddress;
         }
+
+        emit Borrow(msg.sender, amountInDollars, totalAmountAvailableForBorrowInDollars, userPresent, userIndex, borrowers, tokensBorrowedAmount[tokenAddress][msg.sender]);
     }
 
     function payDebt(address tokenAddress, uint256 amount) public {
@@ -207,6 +216,8 @@ contract LendingAndBorrowing is Ownable {
             borrowers[uint256(index)] = borrowers[borrowers.length - 1];
             borrowers.pop();
         }
+
+        emit PayDebt(msg.sender, index, tokenBorrowed, totalTokenAmountToCollectFromUser, borrowers);
     }
 
     function withdraw(address tokenAddress, uint256 amount) public {
@@ -217,16 +228,15 @@ contract LendingAndBorrowing is Ownable {
 
         IERC20 token = IERC20(tokenAddress);
 
-        uint256 tokenAmountLent = tokensLentAmount[tokenAddress][msg.sender];
-
-        require(tokenAmountLent >= amount);
+        
+        uint tokenToWithdrawInDollars = getAmountInDollars(amount, tokenAddress);
+        uint availableToWithdraw = getTokenAvailableToWithdraw(msg.sender);
+        
+        require(tokenToWithdrawInDollars < availableToWithdraw, "You have used some of your supplies as your collateral. Pay your debt before you can be allowed to withdraw. Thanks");
 
         uint256 larTokenToRemove = getAmountInDollars(amount, tokenAddress);
         larToken.transferFrom(msg.sender, address(this), larTokenToRemove);
 
-        // uint tokenAmountToTransferToUser = getTotalLendingInterest(amount, tokenAddress);
-
-        // if (tokensLentAmount[tokenAddress][msg.sender])
 
         token.transfer(msg.sender, amount);
 
@@ -234,13 +244,25 @@ contract LendingAndBorrowing is Ownable {
             tokensLentAmount[tokenAddress][msg.sender] -
             amount;
 
-        // Check If all the amount lent = 0;
-        uint256 totalAmountLent = getTotalAmountLentInDollars(msg.sender);
+        uint totalAmountLentInDollars = getTotalAmountLentInDollars(msg.sender);
 
-        if (totalAmountLent == 0) {
+
+        emit Withdraw(msg.sender, amount, tokenToWithdrawInDollars, availableToWithdraw, totalAmountLentInDollars);
+
+        if (totalAmountLentInDollars <= 0) {
             lenders[uint256(index)] = lenders[lenders.length - 1];
             lenders.pop();
         }
+
+
+    }
+
+    function getTokenAvailableToWithdraw(address user) public view returns(uint256){
+        uint totalAmountLentInDollars = getTotalAmountLentInDollars(user);
+        uint totalAmountBorrowedInDollars = getTotalAmountBorrowedInDollars(user);
+        uint availableToWithdraw = totalAmountLentInDollars - totalAmountBorrowedInDollars;
+
+        return availableToWithdraw;
     }
 
     function indexOf(address user, address[] memory addressArray)
@@ -264,6 +286,8 @@ contract LendingAndBorrowing is Ownable {
         returns (uint256)
     {
         uint256 totalAmountBorrowed = 0;
+
+
         for (uint256 i = 0; i < noOfTokensBorrowed; i++) {
             address userBorrowedTokenAddressFound = tokensBorrowed[i][user];
 

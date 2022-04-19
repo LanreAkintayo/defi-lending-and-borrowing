@@ -131,46 +131,46 @@ def test_borrow_integration():
  # account has dapp_token.balanceOf(account) - toWei(0.1)
 
 
-# def test_pay_debt_integration():
+def test_pay_debt_integration():
 
-#     # brownie test tests/integration/test_lending_and_borrowing.py -k test_pay_debt_integration --network kovan
-#     """
-#     Test that the token amount I owe has reduced after paying some debt
-#     Pay all your debt and check if your name will be removed from the debtors
-#     Pay all the debt of a token and check if the balance that will be there will be zero
-#     Make sure that the token along with the interest is collected from the debtor.
+    # brownie test tests/integration/test_lending_and_borrowing.py -k test_pay_debt_integration --network kovan
+    """
+    Test that the token amount I owe has reduced after paying some debt
+    Pay all your debt and check if your name will be removed from the debtors
+    Pay all the debt of a token and check if the balance that will be there will be zero
+    Make sure that the token along with the interest is collected from the debtor.
 
-#     account borrowed 4 ade token.
-#     another_lender borrowed only 2 lar_token
-#     Total borrowed in dollars = toWei(2) * 2
+    account borrowed 4 ade token.
+    another_lender borrowed only 2 lar_token
+    Total borrowed in dollars = toWei(2) * 2
 
-#     another_lender lent 1 dapp token and borrowed 0.5 lar_token 
-#     """
+    another_lender lent 1 dapp token and borrowed 0.5 lar_token 
+    """
 
 
-#     lending_and_borrowing, lar_token, dapp_token, account, another_lender = test_borrow_integration()
+    lending_and_borrowing, lar_token, dapp_token, account, another_lender = test_borrow_integration()
 
-#     # assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == toWei(2)
-#     assert lending_and_borrowing.getTotalAmountBorrowedInDollars(another_lender) == lending_and_borrowing.getAmountInDollars(toWei(0.5), lar_token)
-#     assert lar_token.balanceOf(another_lender) == toWei(10) + lending_and_borrowing.getAmountInDollars(toWei(1), dapp_token) + toWei(0.5)
+    # assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == toWei(2)
+    assert lending_and_borrowing.getTotalAmountBorrowedInDollars(another_lender) == lending_and_borrowing.getAmountInDollars(toWei(0.5), lar_token)
+    assert lar_token.balanceOf(another_lender) == toWei(10) + lending_and_borrowing.getAmountInDollars(toWei(1), dapp_token) + toWei(0.5)
 
-#     another_lender_lar_token_balance_before_tx = lar_token.balanceOf(another_lender)
+    another_lender_lar_token_balance_before_tx = lar_token.balanceOf(another_lender)
 
-#     lar_token.approve(lending_and_borrowing, toWei(0.275), {"from": another_lender})
-#     lending_and_borrowing.payDebt(lar_token, toWei(0.25), {"from": another_lender})
-#     amount_to_pay_back = toWei(0.275)
+    lar_token.approve(lending_and_borrowing, toWei(0.275), {"from": another_lender})
+    lending_and_borrowing.payDebt(lar_token, toWei(0.25), {"from": another_lender})
+    amount_to_pay_back = toWei(0.275)
 
-#     assert lar_token.balanceOf(another_lender) == another_lender_lar_token_balance_before_tx - amount_to_pay_back
+    assert lar_token.balanceOf(another_lender) == another_lender_lar_token_balance_before_tx - amount_to_pay_back
 
-#     assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == toWei(0.25)
-#     assert lending_and_borrowing.getTotalAmountBorrowedInDollars(another_lender) == lending_and_borrowing.getAmountInDollars(toWei(0.25), lar_token)
-#     assert len(lending_and_borrowing.getBorrowersArray()) == 2
+    assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == toWei(0.25)
+    assert lending_and_borrowing.getTotalAmountBorrowedInDollars(another_lender) == lending_and_borrowing.getAmountInDollars(toWei(0.25), lar_token)
+    assert len(lending_and_borrowing.getBorrowersArray()) == 2
 
-#     lar_token.approve(lending_and_borrowing, toWei(0.2625), {"from": another_lender})
-#     lending_and_borrowing.payDebt(lar_token, toWei(0.25), {"from": another_lender})
+    lar_token.approve(lending_and_borrowing, toWei(0.2625), {"from": another_lender})
+    lending_and_borrowing.payDebt(lar_token, toWei(0.25), {"from": another_lender})
 
-#     assert len(lending_and_borrowing.getBorrowersArray()) == 1
-#     assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == 0
+    assert len(lending_and_borrowing.getBorrowersArray()) == 1
+    assert lending_and_borrowing.tokensBorrowedAmount(lar_token, another_lender) == 0
 
 
 # def test_withdraw_integration():
