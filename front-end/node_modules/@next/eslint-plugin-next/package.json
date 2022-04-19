@@ -1,0 +1,21 @@
+{
+  "name": "@next/eslint-plugin-next",
+  "version": "12.1.4",
+  "description": "ESLint plugin for NextJS.",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "repository": {
+    "url": "vercel/next.js",
+    "directory": "packages/eslint-plugin-next"
+  },
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "glob": "7.1.7"
+  },
+  "devDependencies": {
+    "@types/eslint": "7.28.0"
+  },
+  "gitHead": "48a3222ccc8dea2d1fa02926ee538fe301269d18"
+}

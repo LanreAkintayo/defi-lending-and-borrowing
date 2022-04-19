@@ -1,0 +1,20 @@
+{
+  "contracts": {
+    "ADE": "7f70e7f2179d74c300e40cf1dc31367ddf4205ec",
+    "LARToken": "4ccfa5ceef2d76003b9c0cce7b83f517acd500e6",
+    "LendingAndBorrowing": "223f118fff3058dbf9cc1e58fb8c13db49424baf",
+    "MockDAIToken": "afd97bad3ef442ce01dcbca45ef70bff8fe22908",
+    "MockV3Aggregator": "a343bf9ab36dab93298c11f3196b32a1566d14c1",
+    "OpenZeppelin/openzeppelin-contracts@4.5.0/ERC20": "15aeefd481ce94e0891603de0eb35048b803d199"
+  },
+  "tests": {
+    "tests/unit/test_lending_and_borrow_unit.py": {
+      "coverage": false,
+      "isolated": false,
+      "results": "sF",
+      "sha1": "e81e874355e84be99ac069e794878459894ff9e1",
+      "txhash": []
+    }
+  },
+  "tx": {}
+}
