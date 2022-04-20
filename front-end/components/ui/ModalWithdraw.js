@@ -23,10 +23,10 @@ export default function ModalWithdraw({
 
   let maxInDollars = token.userTotalAmountAvailableToWithdrawInDollars;
 
-  let max = 0.9999 * (maxInDollars / token.oneTokenToDollar);
+  let max = 0.99 * (maxInDollars / token.oneTokenToDollar);
 
   if (Number(token.userTokenLentAmount.amount) < max) {
-    max = 0.9999 * Number(token.userTokenLentAmount.amount);
+    max = 0.99 * Number(token.userTokenLentAmount.amount);
     maxInDollars = convertToDollar(token, max);
   }
 
@@ -216,13 +216,13 @@ export default function ModalWithdraw({
           {/* <!-- Modal footer --> */}
           <div className="flex w-full items-center p-6 space-x-2 rounded-b border-gray-200 dark:border-gray-600">
             <button
-              disabled={!!!value}
+              disabled={!!!value || promiseInProgress}
               onClick={() => onWithdraw(token, value)}
               data-modal-toggle="small-modal"
               type="button"
               className={`${
                 promiseInProgress
-                  ? "bg-gray-500 cursor-wait"
+                  ? "bg-gray-500 cursor-not-allowed"
                   : "bg-gray-800 hover:bg-gray-900 "
               }text-white w-full hover:text-white rounded-md p-2`}
             >

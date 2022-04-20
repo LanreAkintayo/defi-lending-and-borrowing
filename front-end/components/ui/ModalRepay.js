@@ -183,7 +183,7 @@ export default function ModalRepay({
 
               <div className="w-full justify-between flex items-center">
                 <p className="pl-2 pt-0 mt-0 font-medium text-sm text-gray-400">
-                  ${valueInDollars}
+                  ${isNaN(valueInDollars) ? "0": valueInDollars}
                 </p>
                 <div className="flex items-center">
                   <p className="font-medium text-sm text-gray-600">
