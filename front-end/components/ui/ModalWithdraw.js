@@ -13,22 +13,38 @@ export default function ModalWithdraw({
   withdrawError,
   withdrawResult,
   addTokenToMetamask,
+  contract,
+  web3,
 }) {
+  const { promiseInProgress } = usePromiseTracker();
 
-  const { promiseInProgress } = usePromiseTracker()
-  
   const [value, setValue] = useState("");
   const [valueInDollars, setValueInDollars] = useState("0");
   // const max = token?.userTokenLentAmount.amount;
 
-  let maxInDollars = token.userTotalAmountAvailableToWithdrawInDollars;
+  let userMaximumAvailableInDollars =
+    token.userTotalAmountAvailableToWithdrawInDollars;
+  
+    let max;
+  let maxInDollars;
+  
 
-  let max = 0.99 * (maxInDollars / token.oneTokenToDollar);
+  const balanceInContractInDollars = token.userTokenLentAmount.inDollars - token.totalBorrowedInContract.inDollars;
 
-  if (Number(token.userTokenLentAmount.amount) < max) {
-    max = 0.99 * Number(token.userTokenLentAmount.amount);
-    maxInDollars = convertToDollar(token, max);
-  }
+
+  if (userMaximumAvailableInDollars <= balanceInContractInDollars) {
+      
+      max = userMaximumAvailableInDollars / token.oneTokenToDollar;
+      maxInDollars = convertToDollar(token, max, contract, web3);
+    } else {
+      
+      max = balanceInContractInDollars / token.oneTokenToDollar;
+      maxInDollars =  convertToDollar(token, max, contract, web3)
+    }
+
+
+  
+
 
   // if (parseFloat(maxInDollars) > 0.0001) {
   //   maxInDollars = token.userTotalAmountAvailableToWithdrawInDollars - 0.0001
@@ -70,9 +86,9 @@ export default function ModalWithdraw({
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               ></path>
             </svg>
           </button>
@@ -84,7 +100,7 @@ export default function ModalWithdraw({
       </div>
       {/* <!-- Modal body --> */}
       {withdrawResult?.transactionHash ? (
-        <div className=" w-full max-w-sm  h-full md:h-auto">
+        <div className=" w-full   h-full md:h-auto">
           <div className="flex flex-col w-full justiy-center items-center">
             <Image
               src={correct}
@@ -96,7 +112,7 @@ export default function ModalWithdraw({
             />
             <div className="font-bold mt-4">All Done!</div>
             <p>
-              You've withdrawn {value} {token?.name}
+              You&apos;ve withdrawn {value} {token?.name}
             </p>
             <button
               onClick={() => addTokenToMetamask(token)}
@@ -151,7 +167,7 @@ export default function ModalWithdraw({
                     }
 
                     if (Number(value) >= Number(max)) {
-                      setValue(max);
+                      setValue(parseFloat(max));
                       setValueInDollars(todp(maxInDollars, 3));
                       return;
                     }
@@ -192,11 +208,11 @@ export default function ModalWithdraw({
                 </p>
                 <div className="flex items-center">
                   <p className="font-medium text-sm text-gray-600">
-                    Balance: {todp(maxInDollars, 4)}
+                    Balance: {todp(max, 4)}
                   </p>
                   <button
                     onClick={() => {
-                      setValue(todp(max, 15));
+                      setValue(Number(max));
                       setValueInDollars(todp(maxInDollars, 3));
                     }}
                     className="font-medium ml-2 text-gray-6 00 text-sm"
@@ -208,7 +224,7 @@ export default function ModalWithdraw({
             </div>
 
             {withdrawError && (
-              <div className="text-red-600 text-sm mt-5 bg-red-200 border rounded-md p-2 border-red-200 font-medium">
+              <div className="text-red-600 text-sm mt-5 bg-red-200 border overflow-auto scrollbar-hide rounded-md p-2 border-red-200 font-medium">
                 {withdrawError.message}
               </div>
             )}

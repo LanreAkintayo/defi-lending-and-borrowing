@@ -34,6 +34,8 @@ export const useAccount = () => {
 export const useSupplyAssets = () => {
   const swrRes = enhanceHook(useHooks((hooks) => hooks.useSupplyAssets)());
 
+  
+
   return {
     tokens: swrRes,
   };

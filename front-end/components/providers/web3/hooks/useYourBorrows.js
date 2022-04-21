@@ -32,12 +32,8 @@ export const handler = (web3, contract) => () => {
             .tokensBorrowed(i, account)
             .call();
 
-          // console.log("Current Token Address", currentTokenAddress)
-
-          // console.log("Token Address tracker: ", tokenAddressTracker)
 
           if (tokenAddressTracker.includes(currentTokenAddress)) {
-            // console.log("I'm inside here")
             continue;
           }
 
@@ -55,13 +51,10 @@ export const handler = (web3, contract) => () => {
               currentToken
             );
 
-            console.log("Each Borrow: ", normalized);
-
             yourBalance += parseFloat(
               normalized.userTokenBorrowedAmount.inDollars
             );
 
-            console.log(normalized.userTokenBorrowedAmount.amount);
             
             if (Number(normalized.userTokenBorrowedAmount.amount) > 0) {
               yourBorrows.push(normalized);
@@ -71,8 +64,7 @@ export const handler = (web3, contract) => () => {
             
           }
         }
-        console.log("This is the balance: ", yourBalance);
-        console.log("These are the borrows:  ", yourBorrows);
+  
       }
       return { yourBorrows, yourBalance };
     }

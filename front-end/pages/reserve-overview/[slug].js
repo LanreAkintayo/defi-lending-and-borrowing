@@ -15,33 +15,39 @@ import { useRouter } from "next/router";
 import { todp } from "@utils/todp";
 import { convertToDollar } from "@utils/helpfulScripts";
 
-export default function Details() {
+export default function Details({ token }) {
+
   const { web3, contract } = useWeb3();
   const { account } = useAccount();
   const { yourSupplies } = useYourSupplies()
   const {yourBorrows} = useYourBorrows()
 
-  const router = useRouter();
-  const query = router.query;
-  const image = JSON.parse(query.image);
+  // const router = useRouter();
 
-  const availableAmountInContract = JSON.parse(query.availableAmountInContract);
-  const totalBorrowedInContract = JSON.parse(query.totalBorrowedInContract);
-  const totalSuppliedInContract = JSON.parse(query.totalSuppliedInContract);
-  const userTokenBorrowedAmount = JSON.parse(query.userTokenBorrowedAmount);
-  const userTokenLentAmount = JSON.parse(query.userTokenLentAmount);
-  const walletBalance = JSON.parse(query.walletBalance);
+  // const query = router.query;
 
-  const token = {
-    ...query,
-    image,
-    availableAmountInContract,
-    totalBorrowedInContract,
-    totalSuppliedInContract,
-    userTokenBorrowedAmount,
-    userTokenLentAmount,
-    walletBalance,
-  };
+  // // console.log(query)
+
+
+  // const image = JSON.parse(query.image);
+
+  // const availableAmountInContract = JSON.parse(query.availableAmountInContract);
+  // const totalBorrowedInContract = JSON.parse(query.totalBorrowedInContract);
+  // const totalSuppliedInContract = JSON.parse(query.totalSuppliedInContract);
+  // const userTokenBorrowedAmount = JSON.parse(query.userTokenBorrowedAmount);
+  // const userTokenLentAmount = JSON.parse(query.userTokenLentAmount);
+  // const walletBalance = JSON.parse(query.walletBalance);
+
+  // const token = {
+  //   ...query,
+  //   image,
+  //   availableAmountInContract,
+  //   totalBorrowedInContract,
+  //   totalSuppliedInContract,
+  //   userTokenBorrowedAmount,
+  //   userTokenLentAmount,
+  //   walletBalance,
+  // };
 
   // const collateral =  token.userTotalSupplyBalance;
 
@@ -77,7 +83,6 @@ export default function Details() {
     actualAvailableInDollars = tokenAvailableInContractInDollars;
   }
 
-  console.log("Actual Available: ", actualAvailable);
 
   
   return (
@@ -95,9 +100,9 @@ export default function Details() {
                 <div className="w-full px-4">
                   <div className="relative flex sm:flex-row sm:mt-0 mt-6 flex-col xl:w-5/12 min-w-0 p-3 rounded mb-6 xl:mb-0 ">
                     <div className="flex items-center">
-                      {image && (
+                      {token.image && (
                         <Image
-                          src={image}
+                          src={token.image}
                           width={40}
                           height={40}
                           layout="fixed"
@@ -129,12 +134,12 @@ export default function Details() {
                           </svg>
                         </div>
                         <div className=" ml-2">
-                          <p className="text-sm text-white">
+                          <div className="text-sm text-white">
                             Reserve Size:{" "}
                             <div className="font-bold text-xl">
-                              ${todp(totalSuppliedInContract.inDollars, 2)}
+                              ${todp(token.totalSuppliedInContract.inDollars, 2)}
                             </div>
-                          </p>
+                          </div>
                         </div>
                       </div>
 
@@ -161,7 +166,7 @@ export default function Details() {
                           </svg>
                         </div>
                         <div className=" ml-2">
-                          <p className="text-sm text-white">
+                          <div className="text-sm text-white">
                             Available Liquidity:{" "}
                             <div className="font-bold text-xl">
                               $
@@ -170,7 +175,7 @@ export default function Details() {
                                 2
                               )}
                             </div>
-                          </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -207,4 +212,58 @@ export default function Details() {
       {/* <ModalBorrow /> */}
     </div>
   );
+}
+
+// export function getStaticPaths() {
+//   const  data  = ["DAI", "WETH", "LINK", "FAU"];
+
+//   /*
+//   return {
+//   paths: [{params: {slug: a}}, {params: {slug: b}}]
+//   }
+  
+//   */
+
+//   return {
+    
+//     paths: data.map((tokenName) => {
+//       return {
+//         params: { slug: tokenName },
+//       };
+//     }),
+//     fallback: false, // This means that we are telling next that we have specified the path of all the pages that will be dynamically prerendered
+//   };
+// }
+
+export async function getServerSideProps(context) {git
+
+
+  const query = context.query;
+
+  const image = JSON.parse(query.image);
+
+  const availableAmountInContract = JSON.parse(query.availableAmountInContract);
+  const totalBorrowedInContract = JSON.parse(query.totalBorrowedInContract);
+  const totalSuppliedInContract = JSON.parse(query.totalSuppliedInContract);
+  const userTokenBorrowedAmount = JSON.parse(query.userTokenBorrowedAmount);
+  const userTokenLentAmount = JSON.parse(query.userTokenLentAmount);
+  const walletBalance = JSON.parse(query.walletBalance);
+
+  const token = {
+    ...query,
+    image,
+    availableAmountInContract,
+    totalBorrowedInContract,
+    totalSuppliedInContract,
+    userTokenBorrowedAmount,
+    userTokenLentAmount,
+    walletBalance,
+  };
+
+
+  return {
+    props: {
+      token
+    },
+  };
 }

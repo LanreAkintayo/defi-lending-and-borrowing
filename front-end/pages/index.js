@@ -28,7 +28,7 @@ import { trackPromise } from "react-promise-tracker";
 import SupplyRow from "@components/ui/SupplyRow";
 import BorrowRow from "@components/ui/BorrowRow";
 import { todp } from "@utils/todp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { network } = useNetwork();
@@ -38,6 +38,19 @@ export default function Home() {
   const { tokensForBorrow } = useBorrowAssets();
   const { yourSupplies } = useYourSupplies();
   const { yourBorrows } = useYourBorrows();
+
+  
+    useEffect(() => {
+      if (contract) {
+        contract.events.allEvents(function (error, result) {
+          if (!error) {
+            // Track events here
+          } 
+        });
+      }
+      
+    }, [contract]);
+
 
   const IMAGES = {
     DAI:
@@ -73,9 +86,8 @@ export default function Home() {
   const [repayResult, setRepayResult] = useState(null);
 
   const toWei = (value) => {
-    return web3.utils.toWei(value);
+    return web3.utils.toWei(value.toString());
   };
-
 
   const handleCloseModal = () => {
     setSupplyError(null);
@@ -103,13 +115,13 @@ export default function Home() {
     try {
       await trackPromise(
         tokenInst.methods
-          .approve(contract.options.address, web3.utils.toWei(value))
+          .approve(contract.options.address, toWei(value))
           .send({ from: account.data })
       );
 
       const supplyResult = await trackPromise(
         contract.methods
-          .lend(tokenInst.options.address, web3.utils.toWei(value))
+          .lend(tokenInst.options.address, toWei(value))
           .send({ from: account.data })
       );
 
@@ -119,7 +131,7 @@ export default function Home() {
 
       await trackPromise(
         larToken.methods
-          .approve(contract.options.address, web3.utils.toWei(larTokenBalance))
+          .approve(contract.options.address, toWei(larTokenBalance))
           .send({ from: account.data })
       );
 
@@ -129,18 +141,7 @@ export default function Home() {
     }
   };
 
-  if (contract) {
-    contract.events
-      .Withdraw(function (error, event) {
-        // console.log("Event: ", event);
-      })
-      .on("connected", function (subscriptionId) {
-        // console.log("Subscription ID: ", subscriptionId);
-      })
-      .on("data", function (event) {
-        // console.log("On Data: ", event); // same results as the optional callback above
-      });
-  }
+  
 
   const borrowToken = async (token, value) => {
     setBorrowingError(null);
@@ -149,7 +150,7 @@ export default function Home() {
     try {
       const borrowingResult = await trackPromise(
         contract.methods
-          .borrow(web3.utils.toWei(value), token.tokenAddress)
+          .borrow(toWei(value), token.tokenAddress)
           .send({ from: account.data })
       );
       setBorrowingResult(borrowingResult);
@@ -159,15 +160,14 @@ export default function Home() {
   };
 
   const withdrawToken = async (token, value) => {
-    console.log("Token to withdraw: ", token);
-    console.log("Value: ", toWei(value));
     setWithdrawError(null);
     setWithdrawResult(null);
+
 
     try {
       const withdrawResult = await trackPromise(
         contract.methods
-          .withdraw(token.tokenAddress, web3.utils.toWei(value))
+          .withdraw(token.tokenAddress, toWei(value))
           .send({ from: account.data })
       );
       setWithdrawResult(withdrawResult);
@@ -177,18 +177,12 @@ export default function Home() {
   };
 
   const repayToken = async (token, value) => {
-    console.log("Token to repay: ", token);
-    console.log("Value to repay: ", value);
-
     setRepayError(null);
     setRepayResult(null);
 
     const tokenToRepay = new web3.eth.Contract(ERC20.abi, token.tokenAddress);
     const interest = Number(token.borrowAPYRate) * Number(toWei(value));
     const amountToPayBack = (Number(toWei(value)) + interest).toString();
-
-    console.log(amountToPayBack);
-    console.log(toWei(token.walletBalance.amount));
 
     try {
       await trackPromise(
@@ -209,7 +203,6 @@ export default function Home() {
   };
 
   const addBorrowedToken = async (token) => {
-    console.log(token.decimals);
 
     const tokenAddress = token.tokenAddress;
     const tokenSymbol = token.name;
@@ -232,9 +225,9 @@ export default function Home() {
       });
 
       if (wasAdded) {
-        console.log("Thanks for your interest!");
+        // Added
       } else {
-        console.log("Your loss!");
+        // Not Added
       }
     } catch (error) {
       console.log(error);
@@ -263,9 +256,9 @@ export default function Home() {
       });
 
       if (wasAdded) {
-        console.log("Thanks for your interest!");
+     // Added
       } else {
-        console.log("Your loss!");
+        // Not Added
       }
     } catch (error) {
       console.log(error);
@@ -299,14 +292,15 @@ export default function Home() {
       });
 
       if (wasAdded) {
-        console.log("Thanks for your interest!");
+        // Added
       } else {
-        console.log("Your loss!");
+        // Not Added
       }
     } catch (error) {
       console.log(error);
     }
   };
+
 
   return (
     <div className="">
@@ -320,7 +314,7 @@ export default function Home() {
             ) : (
               <div>
                 <div className="relative bg-gray-100 ">
-                  <Navbar accountAddress={account.data} />
+                  <Navbar accountAddress={account.data} />  
                   {/* Header */}
                   <div className="relative bg-gray-700 md:pt-32 pb-32 pt-12">
                     <div className="px-4 md:px-10 mx-auto w-full">
@@ -400,6 +394,7 @@ export default function Home() {
                             {(token) => {
                               return (
                                 <SupplyRow
+                                  key={token.tokenAddress}
                                   token={token}
                                   Withdraw={() => {
                                     return (
@@ -440,6 +435,7 @@ export default function Home() {
                             return (
                               <BorrowRow
                                 token={token}
+                                key={token.tokenAddress}
                                 Repay={() => {
                                   return (
                                     <button
@@ -478,6 +474,7 @@ export default function Home() {
                             return (
                               <RowSupplyAsset
                                 token={token}
+                                key={token.tokenAddress}
                                 Supply={() => {
                                   return (
                                     <button
@@ -508,6 +505,7 @@ export default function Home() {
                                             totalSuppliedInContract: JSON.stringify(
                                               token.totalSuppliedInContract
                                             ),
+
                                             userTokenBorrowedAmount: JSON.stringify(
                                               token.userTokenBorrowedAmount
                                             ),
@@ -543,6 +541,7 @@ export default function Home() {
                             return (
                               <RowBorrowAsset
                                 token={token}
+                                key={token.tokenAddress}
                                 balance={yourSupplies.data?.yourBalance}
                                 Borrow={() => {
                                   return (
@@ -671,6 +670,8 @@ export default function Home() {
             withdrawError={WithdrawError}
             withdrawResult={WithdrawResult}
             addTokenToMetamask={addTokenToMetamask}
+            contract={contract}
+            web3={web3}
           />
         )}
 

@@ -1,35 +1,9 @@
-import luna from "@assets/luna.png";
-import { useWeb3 } from "@components/providers/web3";
 import { convertToDollar } from "@utils/helpfulScripts";
 import { todp } from "@utils/todp";
 import Image from "next/image";
-import Link from "next/link";
 
 export default function RowBorrowAsset({ token, balance, Borrow, Details }) {
-  // console.log("This is the token in RowBorrowAsset: ", token)
-
-  // console.log("This is the contract: ", contract)
-
-  // name
-  //   image
-  //   tokenAddress
-  //   walletBalance
-  //   walletBalanceInDollars
-  //   LTV
-  //   borrowAPYRate
-  //   totalSuppliedInContract
-  //   totalBorrowedInContract
-    // availableAmountInContract
-  //   userTokenBorrowedamount
-  //   userTokenLentamount
-  //   utilizationRate
-  // oneTokenToDollar
-
-  //   const getAmountInDollars = async (amount, tokenAddress) => {
-  //     const amountInDollars = await contract.methods.getAmountInDollars(amount, tokenAddress).call()
-
-  //     return amountInDollars
-  // }
+  
 
   const to2dp = (amount) => {
     return Number(amount).toFixed(2)
@@ -40,12 +14,6 @@ export default function RowBorrowAsset({ token, balance, Borrow, Details }) {
   let actualAvailableInDollars = "0";
 
   let userTotalAmountAvailableForBorrowInDollars = token.userTotalAmountAvailableForBorrowInDollars
-
-  // if (userTotalAmountAvailableForBorrowInDollars >= 1 ) {
-  //   userTotalAmountAvailableForBorrowInDollars =
-  //   token.userTotalAmountAvailableForBorrowInDollars;
-  // }
-
 
   const tokenEquivalent =
     0.999 * ( userTotalAmountAvailableForBorrowInDollars / parseFloat(token.oneTokenToDollar));

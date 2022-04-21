@@ -27,7 +27,7 @@ export const handler = (web3 = null, provider = null) => {
       provider?.on("accountsChanged", mutator);
 
       return () => provider?.removeListener("accountsChanged", mutator);
-    }, [provider]);
+    }, []);
 
     return {
       mutate,

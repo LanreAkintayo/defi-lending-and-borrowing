@@ -120,9 +120,9 @@ export default function TokenInfo({
       });
 
       if (wasAdded) {
-        console.log("Thanks for your interest!");
+      // Added
       } else {
-        console.log("Your loss!");
+        // Not Added
       }
     } catch (error) {
       console.log(error);
@@ -156,9 +156,9 @@ export default function TokenInfo({
       });
 
       if (wasAdded) {
-        console.log("Thanks for your interest!");
+       // Added
       } else {
-        console.log("Your loss!");
+       // Not Added
       }
     } catch (error) {
       console.log(error);

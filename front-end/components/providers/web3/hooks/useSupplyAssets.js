@@ -13,13 +13,18 @@ const NETWORKS = {
 
 
 export const handler = (web3, contract) => () => {
+
  
   const { data, error, mutate, ...rest } = useSWR(
     () => (web3 ? "web3/supply_assets" : null),
     async () => {
     
       const supplyAssets = []
+
+      
       const tokens = await contract.methods.getTokensForLendingArray().call()
+
+      
 
       for (let i = 0; i < tokens.length; i++){
         const currentToken = tokens[i]
@@ -27,7 +32,9 @@ export const handler = (web3, contract) => () => {
 
         const newToken = await normalizeToken(web3, contract, currentToken)
 
-        // console.log("New Tok en: ", newToken)
+        
+
+        
 
     
         supplyAssets.push(newToken)

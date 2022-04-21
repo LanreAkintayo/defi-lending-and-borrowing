@@ -1,15 +1,10 @@
-import { useWeb3 } from "@components/providers/web3/index.js";
 import React from "react";
 
 
 export default function Navbar({accountAddress}) {
-  const { account, provider, contract, requireInstall } = useWeb3()
-
-  console.log(account)
 
   return (
     <>
-      {account}
       {/* Navbar */}
       <nav className="md:flex-row md:flex-nowrap md:justify-start flex items-center px-4 py-2 border bg-gray-700 border-gray-500">
         <div className="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">

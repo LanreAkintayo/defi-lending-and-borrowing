@@ -33,6 +33,7 @@ const account = accounts[0];
   const walletBalance = await tokenInst.methods
     .balanceOf(account)
     .call();
+  
 
   const totalSuppliedInContract = await contract.methods
     .getTotalTokenSupplied(currentToken.tokenAddress)
@@ -56,9 +57,11 @@ const account = accounts[0];
     )
     .call();
   
+  
   const userTotalAmountAvailableToWithdrawInDollars = await contract.methods.getTokenAvailableToWithdraw(account).call();  
 
   const userTotalAmountAvailableForBorrowInDollars = await contract.methods.getUserTotalAmountAvailableForBorrowInDollars(account).call();
+    
 
  
   const walletBalanceInDollars = await contract.methods
@@ -73,14 +76,19 @@ const account = accounts[0];
   const userTokenBorrowedAmountInDollars = await contract.methods
     .getAmountInDollars(userTokenBorrowedAmount, currentToken.tokenAddress)
     .call();
+
+    
   const userTokenLentAmountInDollars = await contract.methods
     .getAmountInDollars(userTokenLentAmount, currentToken.tokenAddress)
   .call();
  
- const availableAmountInContract = (toBN(totalSuppliedInContract).sub(toBN(totalBorrowedInContract))).toString()
+  const availableAmountInContract = (toBN(totalSuppliedInContract).sub(toBN(totalBorrowedInContract))).toString()
+
  const availableAmountInContractInDollars = await contract.methods
  .getAmountInDollars(availableAmountInContract, currentToken.tokenAddress)
     .call();
+  
+  
   
   
   const result = await contract.methods.oneTokenEqualsHowManyDollars(currentToken.tokenAddress).call()
@@ -91,7 +99,7 @@ const account = accounts[0];
   
   const oneTokenToDollar = parseFloat(price) / (10 ** parseInt(decimal))
 
-
+      
   return {
     name: currentToken.name,
     image: tokenImages[currentToken.name],

@@ -30,7 +30,6 @@ export default function ModalRepay({
   const [valueInDollars, setValueInDollars] = useState("0");
 
   const actualMax =
-    0.99999 *
     (Number(token.walletBalance.amount) -
       Number(token.walletBalance.amount) * Number(token.borrowAPYRate));
   const tokenOwedWithInterest =
@@ -39,7 +38,7 @@ export default function ModalRepay({
 
   let max;
 
-  if (Number(token.walletBalance.amount) > 1.000001 * tokenOwedWithInterest) {
+  if (Number(token.walletBalance.amount) > tokenOwedWithInterest) {
     max = Number(token.userTokenBorrowedAmount.amount);
   } else {
     max = actualMax;
@@ -78,9 +77,9 @@ export default function ModalRepay({
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               ></path>
             </svg>
           </button>
@@ -191,7 +190,7 @@ export default function ModalRepay({
                   </p>
                   <button
                     onClick={() => {
-                      setValue(todp(max, 15));
+                      setValue(Number(max));
                       setValueInDollars(todp(maxInDollars, 4));
                     }}
                     className="font-medium ml-2 text-gray-6 00 text-sm"

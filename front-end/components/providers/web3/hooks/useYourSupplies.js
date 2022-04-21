@@ -30,11 +30,8 @@ export const handler = (web3, contract) => () => {
             .tokensLent(i, account)
             .call();
 
-          // console.log("Current Token Address", currentTokenAddress)
 
-          // console.log("Token Address tracker: ", tokenAddressTracker)
           if (tokenAddressTracker.includes(currentTokenAddress)) {
-            // console.log("I'm inside here")
             continue;
           }
 
@@ -52,18 +49,19 @@ export const handler = (web3, contract) => () => {
               currentToken
             );
 
-            console.log("Each supply: ", normalized);
 
             yourBalance += parseFloat(normalized.userTokenLentAmount.inDollars);
 
-            if (parseFloat(normalized.userTokenLentAmount.inDollars) > 0.0001) {
+            
+            if (Number(normalized.userTokenLentAmount.inDollars) > 0.0000000000001) {
+              
               yourSupplies.push(normalized);
               tokenAddressTracker.push(currentTokenAddress);  
             }
           }
         }
-        console.log("This is the balance: ", yourBalance);
-        console.log("These are the supplies:  ", yourSupplies);
+
+        
       }
       return { yourSupplies, yourBalance };
     }

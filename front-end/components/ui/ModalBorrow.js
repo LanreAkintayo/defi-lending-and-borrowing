@@ -25,7 +25,7 @@ export default function ModalBorrow({
     token.userTotalAmountAvailableForBorrowInDollars;
 
   const tokenEquivalent =
-    0.999 *
+    
     (userTotalAmountAvailableForBorrowInDollars /
       parseFloat(token.oneTokenToDollar));
 
@@ -44,6 +44,8 @@ export default function ModalBorrow({
     actualAvailable = tokenAvailableInContract;
     actualAvailableInDollars = tokenAvailableInContractInDollars;
   }
+
+
 
   const [value, setValue] = useState("");
   const [valueInDollars, setValueInDollars] = useState("0");
@@ -80,9 +82,9 @@ export default function ModalBorrow({
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               ></path>
             </svg>
           </button>
@@ -205,7 +207,7 @@ export default function ModalBorrow({
                   </p>
                   <button
                     onClick={() => {
-                      setValue(todp(actualAvailable, 15));
+                      setValue(Number(actualAvailable));
                       setValueInDollars(todp(actualAvailableInDollars, 3));
                     }}
                     className="font-medium ml-2 text-gray-6 00 text-sm"
@@ -226,7 +228,7 @@ export default function ModalBorrow({
               </p>
             </div>
             {borrowingError && (
-              <div className="text-red-600 text-sm mt-5 bg-red-200 border rounded-md p-2 border-red-200 font-medium">
+              <div className="text-red-600 text-sm mt-5 bg-red-200 border overflow-auto scrollbar-hide rounded-md p-2 border-red-200 font-medium">
                 {borrowingError.message}
               </div>
             )}
