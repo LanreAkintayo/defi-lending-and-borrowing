@@ -214,26 +214,6 @@ export default function Details({ token }) {
   );
 }
 
-// export function getStaticPaths() {
-//   const  data  = ["DAI", "WETH", "LINK", "FAU"];
-
-//   /*
-//   return {
-//   paths: [{params: {slug: a}}, {params: {slug: b}}]
-//   }
-  
-//   */
-
-//   return {
-    
-//     paths: data.map((tokenName) => {
-//       return {
-//         params: { slug: tokenName },
-//       };
-//     }),
-//     fallback: false, // This means that we are telling next that we have specified the path of all the pages that will be dynamically prerendered
-//   };
-// }
 
 export async function getServerSideProps(context) {git
 
