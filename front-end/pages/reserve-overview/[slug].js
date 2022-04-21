@@ -93,11 +93,11 @@ export default function Details({ token }) {
         {/* <Navbar /> */}
         {/* Header */}
         <div className="relative bg-gray-700 md:pt-32 pb-32 pt-12">
-          <div className="px-4 md:px-10 mx-auto w-full">
+          <div className="md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
               <div className="flex flex-wrap">
-                <div className="w-full px-4">
+                <div className="w-full px-2">
                   <div className="relative flex sm:flex-row sm:mt-0 mt-6 flex-col xl:w-5/12 min-w-0 p-3 rounded mb-6 xl:mb-0 ">
                     <div className="flex items-center">
                       {token.image && (
@@ -185,12 +185,12 @@ export default function Details({ token }) {
             </div>
           </div>
         </div>
-        <div className="px-4 md:px-10 mx-auto w-full -m-24">
+        <div className="px-2 md:px-10 mx-auto w-full -m-24">
           <div className="flex flex-wrap mt-4">
-            <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+            <div className="w-full xl:w-8/12 mb-5 xl:mb-0 px-2">
               <ReserveStatus token={token} />
             </div>
-            <div className="w-full xl:w-4/12 px-4">
+            <div className="w-full xl:w-4/12 px-2">
               {web3 && contract && account && (
                 <TokenInfo
                   token={token}
@@ -205,7 +205,7 @@ export default function Details({ token }) {
             </div>
           </div>
 
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </div>
 
@@ -215,7 +215,7 @@ export default function Details({ token }) {
 }
 
 
-export async function getServerSideProps(context) {git
+export async function getServerSideProps(context) {
 
 
   const query = context.query;

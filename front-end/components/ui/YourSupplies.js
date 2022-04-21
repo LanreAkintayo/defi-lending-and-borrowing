@@ -14,7 +14,7 @@ export default function YourSupply({ children, tokens, balance }) {
                 <div className="border rounded-md p-1 px-2">
                   <span className="text-gray-800 font-medium">Balance: $</span>
                   <span className="font-medium">
-                    {balance ? todp(balance, 3) : "0"}
+                    {balance ? todp(balance, 2) : "0"}
                   </span>
                 </div>
 
@@ -27,7 +27,7 @@ export default function YourSupply({ children, tokens, balance }) {
                     Collateral: $
                   </span>
                   <span className="font-medium">
-                    {balance ? todp(balance, 3) : "0"}
+                    {balance ? todp(balance, 2) : "0"}
                   </span>
                 </div>
               </div>

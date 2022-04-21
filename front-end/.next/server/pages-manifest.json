@@ -1,8 +1,6 @@
 {
   "/_app": "pages/_app.js",
-  "/": "pages/index.html",
   "/_error": "pages/_error.js",
-  "/reserve-overview/[slug]": "pages/reserve-overview/[slug].js",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
+  "/reserve-overview/[slug]": "pages/reserve-overview/[slug].js"
 }

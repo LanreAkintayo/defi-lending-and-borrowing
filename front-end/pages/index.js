@@ -317,11 +317,11 @@ export default function Home() {
                   <Navbar accountAddress={account.data} />  
                   {/* Header */}
                   <div className="relative bg-gray-700 md:pt-32 pb-32 pt-12">
-                    <div className="px-4 md:px-10 mx-auto w-full">
+                    <div className="px-1 md:px-10 mx-auto w-full">
                       <div>
                         {/* Card stats */}
                         <div className="flex flex-wrap">
-                          <div className="w-full px-4">
+                          <div className="w-full px-2">
                             <div className="relative flex sm:flex-row sm:mt-0 mt-6 flex-col xl:w-5/12 min-w-0 p-3 rounded mb-6 xl:mb-0 ">
                               <div className="flex items-center">
                                 <Image
@@ -333,13 +333,16 @@ export default function Home() {
                                   alt="coinimage"
                                 />
 
-                                <div className="text-2xl sm:text-2xl text- ml-2 text-white font-bold">
-                                  {network.data === "Kovan Test Network"
-                                    ? " Ethereum Kovan Market"
-                                    : "Switch to Kovan"}
+                                <div className="">
+                                    {network.data === "Kovan Test Network"
+                                    
+                                    ?<div className="text-2xl sm:text-2xl text- ml-2 text-white font-bold">Ethereum Kovan Market</div>
+                                    :  (<><div className="bg-red-500 p-2 text-sm rounded-md text-white">Connected to the Wrong network</div> 
+                                    <div className="text-2xl sm:text-2xl text- ml-2 text-white font-bold">Switch to Kovan</div></>)
+                                    }
                                 </div>
                               </div>
-                              <div className="flex">
+                              <div className="flex mt-2">
                                 <div className="flex pt-2 sm:ml-6 items-center">
                                   <div className=" h-9">
                                     <svg
@@ -383,9 +386,9 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <div className="px-4 md:px-10 mx-auto w-full -m-24">
+                  <div className="px-2 md:px-10 mx-auto w-full -m-24">
                     <div className="flex flex-wrap mt-4">
-                      <div className="w-full xl:w-6/12 mb-12 xl:mb-0 px-4">
+                      <div className="w-full xl:w-6/12 xl:mb-0 px-2">
                         {yourSupplies && (
                           <YourSupply
                             tokens={yourSupplies.data?.yourSupplies}
@@ -426,7 +429,7 @@ export default function Home() {
                           </YourSupply>
                         )}
                       </div>
-                      <div className="w-full xl:w-6/12 px-4">
+                      <div className="w-full xl:w-6/12 px-2">
                         <YourBorrows
                           tokens={yourBorrows.data?.yourBorrows}
                           balance={yourBorrows.data?.yourBalance}
@@ -468,7 +471,7 @@ export default function Home() {
                     </div>
 
                     <div className="flex flex-wrap mt-4">
-                      <div className="w-full xl:w-6/12 mb-12 xl:mb-0 px-4">
+                      <div className="w-full xl:w-6/12  xl:mb-0 px-2">
                         <SupplyAsset tokens={tokens.data}>
                           {(token) => {
                             return (
@@ -535,7 +538,7 @@ export default function Home() {
                           }}
                         </SupplyAsset>
                       </div>
-                      <div className="w-full xl:w-6/12 px-4">
+                      <div className="w-full xl:w-6/12 px-2">
                         <BorrowAssets tokens={tokensForBorrow.data}>
                           {(token) => {
                             return (
@@ -602,7 +605,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <Footer />
+                    {/* <Footer /> */}
                   </div>
                 </div>
               </div>
@@ -614,7 +617,7 @@ export default function Home() {
           </>
         ) : requireInstall ? (
           <div className="w-full grid h-screen place-items-center bg-black text-white">
-            <button className="border border-white p-2 rounded-md">
+            <button onClick={() => {window.open('https://metamask.io/download/', '_blank')}} className="border border-white p-2 rounded-md">
               Install metamask
             </button>
           </div>

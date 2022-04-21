@@ -5,6 +5,7 @@ import { useWeb3 } from "@components/providers/web3";
 import { usePromiseTracker } from "react-promise-tracker";
 import { LoadingSpinerComponent } from "test/utils/Spinner";
 import BorderLayout from "./BorderLayout";
+import { todp } from "@utils/helpfulScripts";
 
 export default function ModalSupply({
   token,
@@ -133,7 +134,7 @@ export default function ModalSupply({
                   if (Number(value) >= Number(token?.walletBalance.amount)) {
                     setValue(token?.walletBalance.amount);
                     setValueInDollars(token?.walletBalance.inDollars);
-                    return;
+                    return
                   }
 
                   let usableValue = "0.00";
@@ -168,7 +169,7 @@ export default function ModalSupply({
 
             <div className="w-full justify-between flex items-center">
               <p className="pl-2 pt-0 mt-0 font-medium text-sm text-gray-400">
-                ${valueInDollars}
+                ${todp(valueInDollars, 3)}
               </p>
               <div className="flex items-center">
                 <p className="font-medium text-sm text-gray-600">

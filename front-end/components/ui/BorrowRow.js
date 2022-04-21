@@ -54,7 +54,7 @@ export default function BorrowRow({ token, Repay, Borrow }) {
         </th>
         <td className="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
           <div className="text-base font-medium text-gray-800">{todp(token.userTokenBorrowedAmount.amount, 4)}</div>
-          <div className="text-sm text-gray-500">${ todp(token.userTokenBorrowedAmount.inDollars, 4)}</div>
+          <div className="text-sm text-gray-500">${ todp(token.userTokenBorrowedAmount.inDollars, 2)}</div>
         </td>
         <td className="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
           {todp(token.borrowAPYRate * 100, 2)}%

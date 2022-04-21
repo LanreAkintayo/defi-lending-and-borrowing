@@ -21,7 +21,7 @@ export default function ReserveStatus({ token }) {
 
       <div className="block w-full overflow-x-auto ">
         <div className="flex sm:flex-row flex-col border mb-8 pb-8 border-r-0 border-l-0 border-t-0 border-gray-300">
-          <div className="font-medium text-lg w-6/12">Supply Info</div>
+          <div className="font-medium text-lg w-6/12 mb-2">Supply Info</div>
           <div className="flex flex-col">
             <div className="flex mt-3 sm:mt-0">
               <div>

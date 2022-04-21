@@ -199,7 +199,7 @@ export default function ModalBorrow({
 
               <div className="w-full justify-between flex items-center">
                 <p className="pl-2 pt-0 mt-0 font-medium text-sm text-gray-400">
-                  ${valueInDollars}
+                  ${todp(valueInDollars, 4)}
                 </p>
                 <div className="flex items-center">
                   <p className="font-medium text-sm text-gray-600">
